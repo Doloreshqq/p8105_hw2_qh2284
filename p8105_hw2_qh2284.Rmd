@@ -130,3 +130,49 @@ merge_table = inner_join(pols_add_snp, une_date, by = 'date')
 ------------------------------------------------------------------------
 
 # Problem 2
+
+**Read and clean the Mr. Trash Wheel sheet:**
+
+-   **specify the sheet in the Excel file and to omit non-data entries (rows with notes / figures; columns containing notes) using arguments in `read_excel`**
+
+-   **use reasonable variable names**
+
+-   **omit rows that do not include dumpster-specific data**
+
+```{r}
+# load the dataset
+library(readxl)
+MrTrash = read_excel("202207 Trash Wheel Collection Data.xlsx", sheet = 'Mr. Trash Wheel', range = "A2:N549")
+```
+
+------------------------------------------------------------------------
+
+# Problem 3
+
+**Import, clean, and tidy the dataset of baseline demographics. Ensure that sex and APOE4 carrier status are appropriate encoded (i.e. not numeric), and remove any participants who do not meet the stated inclusion criteria (i.e. no MCI at baseline).**
+
+```{r}
+# load the basline file
+mci_baseline = read.csv('MCI_baseline.csv', skip = 1)
+
+mci_baseline = janitor::clean_names(mci_baseline)
+
+# reencode the sex and APOE4 carrier status
+mci_baseline = mci_baseline %>%
+  mutate(sex = if_else(sex == 0, 'female', 'male')) %>%
+  mutate(apoc4 = if_else(apoe4 == 0, 'non-carrier', 'carrier'))
+
+# remove the participants who don't meet the stated inclusion criteria
+
+
+```
+
+**Discuss important steps in the import process and relevant features of the dataset.**
+
+The important steps in the import process is that we need to skip the first row since it's notes that we don't need in our dataset otherwise it would cause messy. But the note gives us a basic understanding about how the origin data were encoded. For example, Sex == 0 represents the participant is female. apoe4 == 0 represents the participant is non-carrier. We need also focus on `age at onset` variable since we need use it to filter out the participants who don't meet the criteria.
+
+**How many participants were recruited, and of these how many develop MCI?**
+
+**What is the average baseline age?**
+
+**What proportion of women in the study are APOE4 carriers?**
