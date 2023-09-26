@@ -8,6 +8,110 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(tidyr)
+library(lubridate)
+library(dplyr)
 ```
 
-## 
+# Problem 1
+
+**First, clean the data in pols-month.csv. Use `separate()` to break up the variable `mon` into integer variables `year`, `month`, and `day`; replace month number with month name; create a `president` variable taking values `gop` and `dem`, and remove `prez_dem` and `prez_gop`; and remove the day variable.**
+
+```{r}
+# import the dataset
+pols = read_csv("pols-month.csv")
+
+# clean the data
+pols = janitor::clean_names(pols)
+
+```
+
+```{r}
+# break up the date
+pols = separate(pols, mon, into = c("year", "month", "day"), sep = "-")
+
+# replace month number with month name
+pols$month = month.name[as.numeric(pols$month)]
+
+# create a president variable taking values gop and dem, and remove prez_dem and prez_gop
+pols = pols %>%
+  mutate(president = if_else(prez_dem == 1,'dem','gop')) %>%
+  # remove prez_dem and prez_gop, day
+  dplyr::select(-prez_dem, -prez_gop, -day) 
+```
+
+**Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that `year` and `month` are the leading columns.**
+
+```{r}
+# import the dataset
+snp = read_csv("snp.csv")
+
+# clean the data
+snp = janitor::clean_names(snp)
+```
+
+```{r}
+# separate year and month
+snp = separate(snp, date, into = c("month", "day", "year"), sep = "/")
+
+# convert 2-digit year to 4-digit year
+snp = snp %>%
+  mutate(year = if_else(year >= 0 & year <= 15, paste("20", year, sep = ""),paste("19", year, sep = ""))) %>%
+  dplyr::select(year, month,everything()) %>%
+  dplyr::select(-day)
+
+# arrange according year and month
+snp = snp %>% arrange(year, as.numeric(month))
+
+# convert month number to name
+snp$month = month.name[as.numeric(snp$month)]
+
+```
+
+**Third, tidy the unemployment data so that it can be merged with the previous datasets. This process will involve switching from \"wide\" to \"long\" format; ensuring that key variables have the same name; and ensuring that key variables take the same values.**
+
+```{r}
+# import the dataset
+une = read_csv("unemployment.csv")
+```
+
+```{r}
+# convert table from wide to long
+une_new = une %>%
+  pivot_longer(
+    Jan:Dec,
+    names_to = "month",
+    values_to = "percentage"
+  )
+
+# convert month from abb to name
+une_new$month = month.name[match(une_new$month, month.abb)]
+
+# clean the data
+une_new = janitor::clean_names(une_new)
+```
+
+**Join the datasets by merging `snp` into `pols`, and merging `unemployment` into the result.**
+
+```{r}
+# join the datasets by merging snp into pols
+
+```
+
+**Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).**
+
+1.  `pols-month.csv` dataset has 822 rows (observations) and 9 columns (variables). The range of the year (month) is from 1947.01 to 2015.06. The key variables are `mon`, `prez_gop`, `gov_gop`, `sen_gop`, `rep_gop`, `prez_dem`, `gov_dem`, `sen_dem`, `rep_dem`.
+
+    The resulting dataset `pols` has 822 rows (observations) and 9 columns (variables). The range of the year (month) is from 1947 January to 2015 June. The key variables are `year`, `month`, `gov_gop`, `sen_gop`, `rep_gop`, `gov_dem`, `sen_dem`, `rep_dem`, `president`.
+
+2.  `snp.csv` dataset has 787 rows (observations) and 2 columns (variables). The range of the year (month) is from 1950.01 to 2015.07. The key variables are `date`, `close`.
+
+    The resulting dataset `snp` has 787 rows (observations) and 3 columns (variables). The range of the year (month) is from 1950 January to 2015 July. The key variables are `year`, `month`, `close`.
+
+3.  `unemployment.csv` dataset has 68 rows (observations) and 13 columns (variables). The range of the year (month) is from 1948 Jan to 2015 Jun. The key variables are `Year`, `Jan`, `Feb`, `Mar`, `Apr`, `May`, `Jun`, `Jul`, `Aug`, `Sep`, `Oct`, `Nov`, `Dec`.
+
+    The resulting dataset `une_new` has 816 rows (observations) and 3 columns (variables). The range of the year (month) is from 1948 January to 2015 June. The key variables are `year`, `month`, `percentage`.
+
+------------------------------------------------------------------------
+
+# Problem 2
