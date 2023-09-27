@@ -214,7 +214,12 @@ mci_amyloid = janitor::clean_names(mci_amyloid)
 
 # change the name of variables in the dataset
 mci_amyloid = mci_amyloid %>%
-  rename(id=study_id)
+  rename(id=study_id,
+         ratio_baseline = baseline,
+         ratio_time_2_year = time_2,
+         ratio_time_4_year = time_4,
+         ratio_time_6_year = time_6,
+         ratio_time_8_year = time_8)
 
 ```
 
