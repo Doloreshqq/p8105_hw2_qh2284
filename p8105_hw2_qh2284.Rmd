@@ -68,7 +68,7 @@ snp$month = month.name[as.numeric(snp$month)]
 
 ```
 
-**Third, tidy the unemployment data so that it can be merged with the previous datasets. This process will involve switching from \"wide\" to \"long\" format; ensuring that key variables have the same name; and ensuring that key variables take the same values.**
+**Third, tidy the unemployment data so that it can be merged with the previous datasets. This process will involve switching from "wide" to "long" format; ensuring that key variables have the same name; and ensuring that key variables take the same values.**
 
 ```{r}
 # import the dataset
@@ -140,7 +140,7 @@ merge_table = inner_join(pols_add_snp, une_date, by = 'date')
 -   **omit rows that do not include dumpster-specific data**
 
 ```{r}
-# load the dataset
+# load the dataset, choose the range to skip the figure in the first row
 library(readxl)
 MrTrash = read_excel("202207 Trash Wheel Collection Data.xlsx", sheet = 'Mr. Trash Wheel', range = "A2:N549")
 ```
@@ -155,15 +155,17 @@ MrTrash = read_excel("202207 Trash Wheel Collection Data.xlsx", sheet = 'Mr. Tra
 # load the basline file
 mci_baseline = read.csv('MCI_baseline.csv', skip = 1)
 
+# clean the data
 mci_baseline = janitor::clean_names(mci_baseline)
 
 # reencode the sex and APOE4 carrier status
 mci_baseline = mci_baseline %>%
   mutate(sex = if_else(sex == 0, 'female', 'male')) %>%
-  mutate(apoc4 = if_else(apoe4 == 0, 'non-carrier', 'carrier'))
+  mutate(apoe4 = if_else(apoe4 == 0, 'non-carrier', 'carrier'))
 
 # remove the participants who don't meet the stated inclusion criteria
-
+mci_base_new = mci_baseline %>%
+  filter(!age_at_onset == '.')
 
 ```
 
@@ -173,6 +175,74 @@ The important steps in the import process is that we need to skip the first row 
 
 **How many participants were recruited, and of these how many develop MCI?**
 
+`r nrow(mci_baseline)` participants were recruited. `r nrow(mci_base_new)` develop MCI.
+
 **What is the average baseline age?**
 
+```{r}
+# calculate for the average baseline age
+base_mean_age = mean(pull(mci_baseline, current_age))
+
+base_mean_age_mci = mean(pull(mci_base_new, current_age))
+
+```
+
+For recruited participants, the average baseline age is `r mean(pull(mci_baseline, current_age))`. For those develop MCI, the average baseline age is `r mean(pull(mci_base_new, current_age))`.
+
 **What proportion of women in the study are APOE4 carriers?**
+
+```{r}
+# calculate the proportion
+num_carrier_female = mci_base_new %>%
+  filter(sex == 'female') %>%
+  filter(apoe4 == 'carrier') %>%
+  count()
+```
+
+The proportion of women in the study who are APOE4 carriers is `r num_carrier_female/nrow(mci_base_new)` .
+
+**Similarly, import, clean, and tidy the dataset of longitudinally observed biomarker values; comment on the steps on the import process and the features of the dataset.**
+
+For this dataset, we also need to skip the first row since it's also note.
+
+```{r}
+# load the amyloid dataset
+mci_amyloid = read.csv('mci_amyloid.csv', skip = 1)
+
+# clean the data
+mci_amyloid = janitor::clean_names(mci_amyloid)
+
+# change the name of variables in the dataset
+mci_amyloid = mci_amyloid %>%
+  rename(id=study_id)
+
+```
+
+**Check whether some participants appear in only the baseline or amyloid datasets, and comment on your findings.**
+
+```{r}
+# find the difference id in each dataset
+only_in_baseline = setdiff(mci_baseline$id, mci_amyloid$id)
+
+only_in_amyloid = setdiff(mci_amyloid$id, mci_baseline$id)
+```
+
+There are several participants only appear in baseline dataset : participants with id `r only_in_baseline`.
+
+There are several participants only appear in amyloid dataset : participants with id `r only_in_amyloid`.
+
+**Combine the demographic and biomarker datasets so that only participants who appear in both datasets are retained, and briefly describe the resulting dataset; export the result as a CSV to your data directory.**
+
+```{r}
+# combine two datasets together
+combined_dataset = inner_join(mci_baseline, mci_amyloid, by = "id")
+
+head(combined_dataset)
+```
+
+There are `r nrow(combined_dataset)` participants appear in both dataset. The result table contains the infos of the participant's id, age, sex, education, apoe4 status, MCI development, change based on time.
+
+```{r}
+# export the result
+write.csv(combined_dataset, file = "combined dataset.csv", row.names = T)
+```
