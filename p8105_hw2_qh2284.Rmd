@@ -19,7 +19,7 @@ library(dplyr)
 
 ```{r}
 # import the dataset
-pols = read_csv("pols-month.csv")
+pols = read_csv("./dataset/pols-month.csv")
 
 # clean the data
 pols = janitor::clean_names(pols)
@@ -44,7 +44,7 @@ pols = pols %>%
 
 ```{r}
 # import the dataset
-snp = read_csv("snp.csv")
+snp = read_csv("./dataset/snp.csv")
 
 # clean the data
 snp = janitor::clean_names(snp)
@@ -72,7 +72,7 @@ snp$month = month.name[as.numeric(snp$month)]
 
 ```{r}
 # import the dataset
-une = read_csv("unemployment.csv")
+une = read_csv("./dataset/unemployment.csv")
 ```
 
 ```{r}
@@ -142,7 +142,7 @@ merge_table = left_join(pols_add_snp, une_date, by = 'date')
 ```{r}
 # load the dataset, choose the range to skip the figure in the first row
 library(readxl)
-MrTrash = read_excel("202207 Trash Wheel Collection Data.xlsx", sheet = 'Mr. Trash Wheel', range = "A2:N549")
+MrTrash = read_excel("./dataset/202207 Trash Wheel Collection Data.xlsx", sheet = 'Mr. Trash Wheel', range = "A2:N549")
 ```
 
 ```{r}
@@ -168,7 +168,7 @@ MrTrash = MrTrash %>%
 
 ```{r}
 # load the dataset, choose the range to skip the figure in the first row
-Professor = read_excel("202207 Trash Wheel Collection Data.xlsx", sheet = 'Professor Trash Wheel', range = "A2:M96")
+Professor = read_excel("./dataset/202207 Trash Wheel Collection Data.xlsx", sheet = 'Professor Trash Wheel', range = "A2:M96")
 
 # use reasonalble variable names
 Professor = janitor::clean_names(Professor)
@@ -186,7 +186,7 @@ Professor = Professor %>%
 
 ```{r}
 # load the dataset, choose the range to skip the figure in the first row
-Gwynnda = read_excel("202207 Trash Wheel Collection Data.xlsx", sheet = 'Gwynnda Trash Wheel', range = "A2:K108")
+Gwynnda = read_excel("./dataset/202207 Trash Wheel Collection Data.xlsx", sheet = 'Gwynnda Trash Wheel', range = "A2:K108")
 
 # use reasonalble variable names
 Gwynnda = janitor::clean_names(Gwynnda)
@@ -261,7 +261,7 @@ The total number of cigarette butts collected by Gwynnda in July of 2021 is `r s
 
 ```{r}
 # load the basline file
-mci_baseline = read.csv('MCI_baseline.csv', skip = 1)
+mci_baseline = read.csv('./dataset/MCI_baseline.csv', skip = 1)
 
 # clean the data
 mci_baseline = janitor::clean_names(mci_baseline)
@@ -313,7 +313,7 @@ For this dataset, we also need to skip the first row since it's also note.
 
 ```{r}
 # load the amyloid dataset
-mci_amyloid = read.csv('mci_amyloid.csv', skip = 1)
+mci_amyloid = read.csv('./dataset/mci_amyloid.csv', skip = 1)
 
 # clean the data
 mci_amyloid = janitor::clean_names(mci_amyloid)
@@ -355,5 +355,5 @@ There are `r nrow(combined_dataset)` participants appear in both dataset. The re
 
 ```{r}
 # export the result
-write.csv(combined_dataset, file = "combined dataset.csv", row.names = T)
+write.csv(combined_dataset, file = "./dataset/combined dataset.csv", row.names = T)
 ```
