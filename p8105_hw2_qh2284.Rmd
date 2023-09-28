@@ -161,7 +161,7 @@ MrTrash = MrTrash %>%
 ```{r}
 # update the home powered
 MrTrash = MrTrash %>%
-  mutate(homes_powered = round(weight_tons * 500 / 30))
+  mutate(homes_powered = weight_tons * 500 / 30)
 ```
 
 **Use a similar process to import, clean, and organize the data for Professor Trash Wheel and Gwynnda.**
@@ -181,7 +181,7 @@ Professor = Professor %>%
 
 # update the home powered
 Professor = Professor %>%
-  mutate(homes_powered = round(weight_tons * 500 / 30))
+  mutate(homes_powered = weight_tons * 500 / 30)
 ```
 
 ```{r}
@@ -199,7 +199,7 @@ Gwynnda = Gwynnda %>%
 
 # update the home powered
 Gwynnda = Gwynnda %>%
-  mutate(homes_powered = round(weight_tons * 500 / 30))
+  mutate(homes_powered = weight_tons * 500 / 30)
 ```
 
 **Combine these with the Mr. Trash Wheel dataset to produce a single tidy dataset. To keep track of which Trash Wheel is which, you may need to add an additional variable to all datasets before combining.**
