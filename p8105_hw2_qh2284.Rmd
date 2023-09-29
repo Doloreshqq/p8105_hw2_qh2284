@@ -303,9 +303,13 @@ num_carrier_female = mci_base_new %>%
   filter(sex == 'female') %>%
   filter(apoe4 == 'carrier') %>%
   count()
+
+num_female = mci_base_new %>%
+  filter(sex == 'female') %>%
+  count()
 ```
 
-The proportion of women in the study who are APOE4 carriers is `r num_carrier_female/nrow(mci_base_new)` .
+The proportion of women in the study who are APOE4 carriers is `r num_carrier_female/num_female` .
 
 **Similarly, import, clean, and tidy the dataset of longitudinally observed biomarker values; comment on the steps on the import process and the features of the dataset.**
 
