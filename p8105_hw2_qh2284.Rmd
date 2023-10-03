@@ -30,11 +30,10 @@ pols = janitor::clean_names(pols)
 # break up the date
 pols = separate(pols, mon, into = c("year", "month", "day"), sep = "-")
 
-# replace month number with month name
-pols$month = month.name[as.numeric(pols$month)]
-
 # create a president variable taking values gop and dem, and remove prez_dem and prez_gop
 pols = pols %>%
+  # replace month number with month name
+  mutate(month = month.name[as.numeric(month)]) %>%
   mutate(president = if_else(prez_dem == 1,'dem','gop')) %>%
   # remove prez_dem and prez_gop, day
   dplyr::select(-prez_dem, -prez_gop, -day) 
@@ -64,7 +63,8 @@ snp = snp %>%
 snp = snp %>% arrange(year, as.numeric(month))
 
 # convert month number to name
-snp$month = month.name[as.numeric(snp$month)]
+snp = snp %>%
+  mutate(month = month.name[as.numeric(month)])
 
 ```
 
@@ -85,7 +85,8 @@ une_new = une %>%
   )
 
 # convert month from abb to name
-une_new$month = month.name[match(une_new$month, month.abb)]
+une_new = une_new %>%
+  mutate(month = month.name[match(month, month.abb)])
 
 # clean the data
 une_new = janitor::clean_names(une_new)
@@ -115,17 +116,17 @@ merge_table = left_join(pols_add_snp, une_date, by = 'date')
 
 **Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).**
 
-1.  `pols-month.csv` dataset has 822 rows (observations) and 9 columns (variables). The range of the year (month) is from 1947.01 to 2015.06. The key variables are `mon`, `prez_gop`, `gov_gop`, `sen_gop`, `rep_gop`, `prez_dem`, `gov_dem`, `sen_dem`, `rep_dem`.
+1.  `pols-month.csv` dataset has `r nrow(pols)` rows (observations) and `r ncol(pols)` columns (variables). The range of the year (month) is from 1947.01 to 2015.06. The key variables are `mon`, `prez_gop`, `gov_gop`, `sen_gop`, `rep_gop`, `prez_dem`, `gov_dem`, `sen_dem`, `rep_dem`.
 
-    The resulting dataset `pols` has 822 rows (observations) and 9 columns (variables). The range of the year (month) is from 1947 January to 2015 June. The key variables are `year`, `month`, `gov_gop`, `sen_gop`, `rep_gop`, `gov_dem`, `sen_dem`, `rep_dem`, `president`.
+    The resulting dataset `pols` has `r nrow(pols)` rows (observations) and `r ncol(pols)` columns (variables). The range of the year (month) is from 1947 January to 2015 June. The key variables are `year`, `month`, `gov_gop`, `sen_gop`, `rep_gop`, `gov_dem`, `sen_dem`, `rep_dem`, `president`.
 
-2.  `snp.csv` dataset has 787 rows (observations) and 2 columns (variables). The range of the year (month) is from 1950.01 to 2015.07. The key variables are `date`, `close`.
+2.  `snp.csv` dataset has `r nrow(snp)` rows (observations) and 2 columns (variables). The range of the year (month) is from 1950.01 to 2015.07. The key variables are `date`, `close`.
 
-    The resulting dataset `snp` has 787 rows (observations) and 3 columns (variables). The range of the year (month) is from 1950 January to 2015 July. The key variables are `year`, `month`, `close`.
+    The resulting dataset `snp` has `r nrow(snp)` rows (observations) and 3 columns (variables). The range of the year (month) is from 1950 January to 2015 July. The key variables are `year`, `month`, `close`.
 
-3.  `unemployment.csv` dataset has 68 rows (observations) and 13 columns (variables). The range of the year (month) is from 1948 Jan to 2015 Jun. The key variables are `Year`, `Jan`, `Feb`, `Mar`, `Apr`, `May`, `Jun`, `Jul`, `Aug`, `Sep`, `Oct`, `Nov`, `Dec`.
+3.  `unemployment.csv` dataset has `r nrow(une)` rows (observations) and `r ncol(une)` columns (variables). The range of the year (month) is from 1948 Jan to 2015 Jun. The key variables are `Year`, `Jan`, `Feb`, `Mar`, `Apr`, `May`, `Jun`, `Jul`, `Aug`, `Sep`, `Oct`, `Nov`, `Dec`.
 
-    The resulting dataset `une_new` has 816 rows (observations) and 3 columns (variables). The range of the year (month) is from 1948 January to 2015 June. The key variables are `year`, `month`, `percentage`.
+    The resulting dataset `une_new` has `r nrow(une_new)` rows (observations) and `r ncol(une_new)` columns (variables). The range of the year (month) is from 1948 January to 2015 June. The key variables are `year`, `month`, `percentage`.
 
 ------------------------------------------------------------------------
 
@@ -142,7 +143,7 @@ merge_table = left_join(pols_add_snp, une_date, by = 'date')
 ```{r}
 # load the dataset, choose the range to skip the figure in the first row
 library(readxl)
-MrTrash = read_excel("./dataset/202207 Trash Wheel Collection Data.xlsx", sheet = 'Mr. Trash Wheel', range = "A2:N549")
+MrTrash = read_excel("./dataset/202309 Trash Wheel Collection Data.xlsx", sheet = 'Mr. Trash Wheel', range = "A2:N586")
 ```
 
 ```{r}
@@ -168,7 +169,7 @@ MrTrash = MrTrash %>%
 
 ```{r}
 # load the dataset, choose the range to skip the figure in the first row
-Professor = read_excel("./dataset/202207 Trash Wheel Collection Data.xlsx", sheet = 'Professor Trash Wheel', range = "A2:M96")
+Professor = read_excel("./dataset/202309 Trash Wheel Collection Data.xlsx", sheet = 'Professor Trash Wheel', range = "A2:M108")
 
 # use reasonalble variable names
 Professor = janitor::clean_names(Professor)
@@ -186,7 +187,7 @@ Professor = Professor %>%
 
 ```{r}
 # load the dataset, choose the range to skip the figure in the first row
-Gwynnda = read_excel("./dataset/202207 Trash Wheel Collection Data.xlsx", sheet = 'Gwynnda Trash Wheel', range = "A2:K108")
+Gwynnda = read_excel("./dataset/202309 Trash Wheel Collection Data.xlsx", sheet = 'Gwynnda Trash Wheel', range = "A2:L157")
 
 # use reasonalble variable names
 Gwynnda = janitor::clean_names(Gwynnda)
@@ -207,7 +208,7 @@ Gwynnda = Gwynnda %>%
 ```{r}
 # add a column to each dataset for merging
 MrTrash = MrTrash %>%
-  mutate(source = "Mr Trash") %>%
+  mutate(source = "Mr. Trash") %>%
   mutate(year = as.character(year))
 
 Professor = Professor %>%
@@ -221,16 +222,18 @@ Gwynnda = Gwynnda %>%
 # combine data
 total_trash = bind_rows(MrTrash, Professor, Gwynnda)
 
-# make the total table tidy
-total_trash = total_trash %>%
-  dplyr:::select(dumpster, year, month, day, weight_tons, volume_cubic_yards, plastic_bags, everything())
-
 # ordered by the date
 total_trash_date = total_trash %>%
   arrange(year, match(month, month.name), day)
 ```
 
 **Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables.**
+
+MrTrash has `r nrow(MrTrash)` observations and `r ncol(MrTrash)` variables. The dataset contains the weight of different kinds of trash.
+
+Professor has `r nrow(Professor)` observations and `r ncol(Professor)` variables. The dataset contains the weight of different kinds of trash.
+
+Gwynnda has `r nrow(Gwynnda)` observations and `r ncol(Gwynnda)` variables. The dataset contains the weight of different kinds of trash.
 
 The number of observations in the resulting dataset is `r nrow(total_trash)` . The key variables such as `year`, `month`, `day`, represent the record time. `dumpster` represents the "id". `weight` is the variable that represents the weight of the trash which we used to calculate the home being powered. `home_powered`, as mentioned before, is the variable that represents the amount of the home being powered by the trash. `source` represents which sheet the data comes from. Other variables focus on different trash being collected.
 
@@ -273,7 +276,8 @@ mci_baseline = mci_baseline %>%
 
 # remove the participants who don't meet the stated inclusion criteria
 mci_base_new = mci_baseline %>%
-  filter(!age_at_onset == '.')
+  mutate(age_at_onset = ifelse(age_at_onset == '.', NA, age_at_onset)) %>%
+  filter(current_age < age_at_onset | is.na(age_at_onset))
 
 ```
 
@@ -307,9 +311,11 @@ num_carrier_female = mci_base_new %>%
 num_female = mci_base_new %>%
   filter(sex == 'female') %>%
   count()
+
+pro_female_carrier = num_carrier_female/num_female
 ```
 
-The proportion of women in the study who are APOE4 carriers is `r num_carrier_female/num_female` .
+The proportion of women in the study who are APOE4 carriers is `r pro_female_carrier` .
 
 **Similarly, import, clean, and tidy the dataset of longitudinally observed biomarker values; comment on the steps on the import process and the features of the dataset.**
 
@@ -331,28 +337,28 @@ mci_amyloid = mci_amyloid %>%
 
 ```
 
-For this dataset, we also need to skip the first row since it's also note. It totally has `r nrow(mci_amyloid)` observations. It contains key variables such as ratio changing along 0(which is baseline), 2, 4, 6, 8 years.
+For this dataset, we also need to skip the first row since it's also note. It totally has `r nrow(mci_amyloid)` observations and `r ncol(mci_amyloid)` variables. It contains key variables such as ratio changing along 0(which is baseline), 2, 4, 6, 8 years.
 
 **Check whether some participants appear in only the baseline or amyloid datasets, and comment on your findings.**
 
 ```{r}
-# find the difference id in each dataset
-only_in_baseline = setdiff(mci_baseline$id, mci_amyloid$id)
+baseline_only = anti_join(mci_base_new, mci_amyloid,by = "id")
+amyloid_only = anti_join(mci_amyloid, mci_base_new, by = "id")
 
-only_in_amyloid = setdiff(mci_amyloid$id, mci_baseline$id)
+# find the difference id in each dataset
+only_in_baseline_id = setdiff(mci_base_new$id, mci_amyloid$id)
+only_in_amyloid_id = setdiff(mci_amyloid$id, mci_base_new$id)
 ```
 
-There are several participants only appear in baseline dataset : participants with id `r only_in_baseline`.
+There are totally `r nrow(baseline_only)` participants only appear in baseline dataset : participants with id `r only_in_baseline_id`.
 
-There are several participants only appear in amyloid dataset : participants with id `r only_in_amyloid`.
+There are totally `r nrow(amyloid_only)` participants only appear in amyloid dataset : participants with id `r only_in_amyloid_id`.
 
 **Combine the demographic and biomarker datasets so that only participants who appear in both datasets are retained, and briefly describe the resulting dataset; export the result as a CSV to your data directory.**
 
 ```{r}
 # combine two datasets together
-combined_dataset = inner_join(mci_baseline, mci_amyloid, by = "id")
-
-head(combined_dataset)
+combined_dataset = inner_join(mci_base_new, mci_amyloid, by = "id")
 ```
 
 There are `r nrow(combined_dataset)` participants appear in both dataset. The result table contains the infos of the participant's id, age, sex, education, apoe4 status, MCI development, change based on time.
