@@ -313,8 +313,6 @@ The proportion of women in the study who are APOE4 carriers is `r num_carrier_fe
 
 **Similarly, import, clean, and tidy the dataset of longitudinally observed biomarker values; comment on the steps on the import process and the features of the dataset.**
 
-For this dataset, we also need to skip the first row since it's also note.
-
 ```{r}
 # load the amyloid dataset
 mci_amyloid = read.csv('./dataset/mci_amyloid.csv', skip = 1)
@@ -332,6 +330,8 @@ mci_amyloid = mci_amyloid %>%
          ratio_time_8_year = time_8)
 
 ```
+
+For this dataset, we also need to skip the first row since it's also note. It totally has `r nrow(mci_amyloid)` observations. It contains key variables such as ratio changing along 0(which is baseline), 2, 4, 6, 8 years.
 
 **Check whether some participants appear in only the baseline or amyloid datasets, and comment on your findings.**
 
