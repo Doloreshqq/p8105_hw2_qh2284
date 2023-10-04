@@ -343,7 +343,7 @@ mci_amyloid = mci_amyloid %>%
 
 ```
 
-For this dataset, we also need to skip the first row since it's also note. We apply pivot_longer( ) to make the dataset more readable with time and ratio obviously shown. It totally has `r nrow(mci_amyloid)` observations (where an id has 5 rows) and `r ncol(mci_amyloid)` variables. It contains key variables such as id, time and ratio.
+For this dataset, we also need to skip the first row since it's also note. We rename `study_id` to `id` for later combination and we rename `baseline` to `year_0` for consitency. We apply pivot_longer( ) to make the dataset more readable with time and ratio obviously shown. There are some NAs in the dateset, which means some ratio values are missing. It totally has `r nrow(mci_amyloid)` observations (where an id has 5 rows, which means `r nrow(mci_amyloid)/5` participants) and `r ncol(mci_amyloid)` variables. It contains key variables such as id, time and ratio.
 
 **Check whether some participants appear in only the baseline or amyloid datasets, and comment on your findings.**
 
